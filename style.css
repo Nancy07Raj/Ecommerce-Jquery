@@ -1,0 +1,14 @@
+body {
+  margin: 0;
+}
+.nav-li {
+  margin: 0 30px;
+}
+.nav-a {
+  color: black;
+  font-size: 17px;
+  font-weight: 500;
+}
+.nav-a:hover {
+  color: #eaeaea;
+}

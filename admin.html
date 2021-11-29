@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <style>
+    #product {
+      margin: 50px 0;
+    }
+    #form {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    form label,
+    input {
+      margin-right: 15px;
+    }
+    #productName {
+      width: 250px;
+    }
+    table {
+      text-align: center;
+    }
+  </style>
+  <body>
+    <nav
+      class="navbar navbar-expand-sm navbar-light"
+      style="background-color: #00adb5"
+    >
+      <div class="container">
+        <ul class="navbar-nav">
+          <li class="nav-item nav-li">
+            <a class="nav-link nav-a" href="#">Home</a>
+          </li>
+          <li class="nav-item nav-li">
+            <a class="nav-link nav-a" href="./admin.html">Admin</a>
+          </li>
+          <li class="nav-item nav-li">
+            <a class="nav-link nav-a" href="./user.html">User</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <section id="product">
+      <form id="form">
+        <label class="form-label" for="productName">Product Name</label>
+        <input type="text" name="productName" id="productName" />
+        <label class="form-label" for="stock">Stock</label>
+        <input type"number" name="stock" id="stock">
+        <button type="button" class="btn-outline-dark" id="save">Save</button>
+      </form>
+    </section>
+    <div id="stockList">
+      <table id="table" class="table table-bordered table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th>Product Name</th>
+            <th>Availabel Stock</th>
+            <th>Edit</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody id="tdata"></tbody>
+      </table>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      jQuery(function ($) {
+        let tdata = $("#tdata");
+        let table = $("#table");
+        let save = $("#save");
+        let productName = $("#productName");
+        let stock = $("#stock");
+        // let productInfo = [];
+        let productInfo = JSON.parse(localStorage.getItem("product"));
+        productList();
+        save.click(function () {
+          let index = localStorage.getItem("editIndex");
+          if (index !== null) {
+            productInfo[index] = {
+              productName: productName.val(),
+              stock: stock.val(),
+            };
+          } else {
+            productInfo.push({
+              productName: productName.val(),
+              stock: stock.val(),
+            });
+            tdata.append(`<tr>
+             <td>${productName.val()}</td>
+            <td>${stock.val()}</td>
+            <td><button type="button" class="btn edit">EDIT</button></td>
+            <td><button type="button"  class="btn delete">DELETE</button></td>
+          </tr>`);
+          }
+          localStorage.setItem("product", JSON.stringify(productInfo));
+          console.log(JSON.parse(localStorage.getItem("product")));
+          location.replace("./admin.html");
+          localStorage.removeItem("editIndex");
+        });
+        function productList() {
+          for (let i = 0; i < productInfo.length; i++) {
+            tdata.append(`<tr>
+          <td>${productInfo[i].productName}</td>
+          <td>${productInfo[i].stock}</td>
+          <td><button type="button" data-id="${i}" class="btn edit">EDIT</button></td>
+          <td><button type="button"  data-id="${i}" class="btn delete">DELETE</button></td>
+        </tr>`);
+          }
+        }
+        $(".delete").click(function () {
+          $(this).closest("tr").remove();
+          let index = $(this).attr("data-id");
+          productInfo.splice(index, 1);
+          localStorage.setItem("product", JSON.stringify(productInfo));
+        });
+        $(".edit").click(function () {
+          let index = $(this).attr("data-id");
+          productName.val(productInfo[index].productName);
+          stock.val(productInfo[index].stock);
+          localStorage.setItem("editIndex", index);
+        });
+      });
+    </script>
+  </body>
+</html>
