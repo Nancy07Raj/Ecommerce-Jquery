@@ -57,7 +57,9 @@
         <label class="form-label" for="productName">Product Name</label>
         <input type="text" name="productName" id="productName" />
         <label class="form-label" for="stock">Stock</label>
-        <input type"number" name="stock" id="stock">
+        <input type="number" name="stock" id="stock" />
+        <label for="price">Price(per Item)</label>
+        <input type="number" name="price" id="price" />
         <button type="button" class="btn-outline-dark" id="save">Save</button>
       </form>
     </section>
@@ -67,6 +69,7 @@
           <tr>
             <th>Product Name</th>
             <th>Availabel Stock</th>
+            <th>Price(per Item)</th>
             <th>Edit</th>
             <th>Delete</th>
           </tr>
@@ -88,24 +91,41 @@
         let save = $("#save");
         let productName = $("#productName");
         let stock = $("#stock");
-        // let productInfo = [];
-        let productInfo = JSON.parse(localStorage.getItem("product"));
-        productList();
+        let price = $("#price");
+        let productInfo;
+        if (localStorage.getItem("product") !== null) {
+          productInfo = JSON.parse(localStorage.getItem("product"));
+          productList();
+        }
         save.click(function () {
           let index = localStorage.getItem("editIndex");
-          if (index !== null) {
+          if (localStorage.getItem("product") == null) {
+            productInfo = [
+              {
+                productName: productName.val(),
+                stock: stock.val(),
+                price: price.val(),
+                quantity: "0",
+              },
+            ];
+          } else if (index !== null) {
             productInfo[index] = {
               productName: productName.val(),
               stock: stock.val(),
+              price: price.val(),
+              quantity: "0",
             };
           } else {
             productInfo.push({
               productName: productName.val(),
               stock: stock.val(),
+              price: price.val(),
+              quantity: "0",
             });
             tdata.append(`<tr>
              <td>${productName.val()}</td>
             <td>${stock.val()}</td>
+            <td>${price.val()}</td>
             <td><button type="button" class="btn edit">EDIT</button></td>
             <td><button type="button"  class="btn delete">DELETE</button></td>
           </tr>`);
@@ -120,6 +140,7 @@
             tdata.append(`<tr>
           <td>${productInfo[i].productName}</td>
           <td>${productInfo[i].stock}</td>
+          <td>${productInfo[i].price}</td>
           <td><button type="button" data-id="${i}" class="btn edit">EDIT</button></td>
           <td><button type="button"  data-id="${i}" class="btn delete">DELETE</button></td>
         </tr>`);
@@ -135,6 +156,7 @@
           let index = $(this).attr("data-id");
           productName.val(productInfo[index].productName);
           stock.val(productInfo[index].stock);
+          price.val(productInfo[index].price);
           localStorage.setItem("editIndex", index);
         });
       });
